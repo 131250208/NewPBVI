@@ -1,0 +1,250 @@
+POMDPSolver——程序的入口
+加载POMDP模型，调用的方法是POMDP.load(sFileName)，对应的文件Models/Wumpus7_0.POMDP
+三步:1.POMDPLoader.load(sFileName)
+     2.initStoredRewards();  可选
+     3.initBeliefStateFactory();
+	 
+读取文件Models/Wumpus7_0.POMDP
+1.读取所有的states,actions,observations,discount等
+2.初始化各种重要的函数
+  状态转移函数T(s,a,s')
+  回报值函数R(s,a,s')
+  观察函数O(s,a,z)
+
+加载之后，实例化了POMDP对象
+POMDP对象中以下参数被初始化
+m_dGamma  折扣因子
+
+m_cStates 状态总数
+m_mStates 保存状态的一个map，key为状态名称，value为其索引
+m_vStateNames  状态名称向量，一个Vector
+
+m_cActions 动作总数
+m_mActionIndexes  保存动作的一个map，key为动作名称，value为其索引
+m_vActionNames  动作名称向量，一个Vector
+
+m_cObservations 观察总数
+m_mObservations 保存观察的一个map，key为观察名称，value为其索引
+
+m_fTransition 转移函数T(s,a,s'),初始化为一个SparseTabularFunction实例。      
+SparseTabularFunction中初始化m_mTripleParameterValues为一个二维数组，每个数组元素是一个HashMap,实际上就是一个三维数组。
+
+m_fObservation 观察函数O(a,s,o),初始化为一个SparseTabularFunction实例。
+
+m_rtReward 回报值类型
+m_fReward 回报函数R(s,a,s'),初始化为SparseTabularFunction或者TabularFunction
+m_adMinActionRewards 动作的最小回报值，一个一维数组，索引为动作
+m_dMinReward 最小的回报值
+
+m_fStartState 开始状态，初始化为一个SparseTabularFunction或者TabularFunction
+
+m_vTerminalStates 一个向量Vector，保存结束状态
+
+m_vObservationStates 一个向量Vector，保存观察状态
+
+m_bsFactory  信念工厂
+
+m_vfMDP  初始化为MDP值函数
+
+--------------------------------------------------------------------------------------------------------------------------------
+
+值迭代ValueIteration
+ValueIteration v = new PointBasedValueIteration(pomdp);
+v.valueiteration(dTargetADR);
+dTarget...............................
+
+1.扩充信念点集
+Expander expander = new Expander(m_pPOMDP);
+BeliefStateVector<BeliefState> vBeliefPoints = expander.expand(EXPAND);
+EXPAND为探索的信念点与当前信念点集的距离，信念点与点集的距离必须大于EXPAND才能加入点集
+
+expander.expand(double epsilon);   从初始信念点开始以广度优先的方式遍历
+    BeliefStateVector<BeliefState> vBeliefPoints = new BeliefStateVector<BeliefState>();
+    其中vBeliefPoints是最终生成的信念点集
+
+    Queue<BeliefState> q = new LinkedList<BeliefState>();  队列用来广度优先遍历
+    BeliefState initial = pomdp.getBeliefStateFactory().getInitialBeliefState();  得到初始信念点
+    q.offer(initial);
+    while(!q.empty())  队列非空
+    {
+        BeliefState bs = q.poll();   取出一个点
+        for(int iAction = 0; iAction < pomdp.getActionCount(); ++iAction)
+        {
+            for(int iObservation = 0; iObservation < pomdp.getObservationCount(); ++iObservation)
+            {
+                BeliefState next = bs.nextBeliefState(iAction, iObservation);
+                对信念点bs的每一个动作和每一个观察下计算出下一个信念点
+                if(next != null && !vBeliefPoints.contains(next)) next不为空，并且信念点集中不包含这个点
+                {
+                    next.setLevel(bs.getLevel() + 1);  设置当前信念点的层数
+                    boolean inRange = false;   判断next点和点集vBeliefPoints的距离是否大于epsilon
+                    L1Distance distancer = new L1Distance();
+					for(BeliefState beliefState:vBeliefPoints)  计算next点和点集vBeliefPoints的距离
+					{
+						if(distancer.distance(beliefState, next) < epsilon)
+						{
+							inRange = true;
+							break;
+						}
+					}
+
+					if(!inRange)  next点与点集的距离大于epsilon
+					{
+                       if(next.getLevel() <= LEVEL) 判断当前信念点探索到了信念空间的第几层，一般到第六或第七层结束
+                       {                             //把next点加入到点集中
+                            q.offer(next);    
+							vBeliefPoints.add(next);
+                       }
+                       else   探索到了指定的层数，返回信念点集
+						{
+							return vBeliefPoints; 
+						}
+					}
+                }
+            }
+        }
+    }
+    return vBeliefPoints; 扩充结束
+
+2.用DBSCAN算法进行聚类
+DBSCAN dbscan = new DBSCAN(10);
+ArrayList<BeliefStateVector<BeliefState>> dbscanResult = dbscan.DBSCAN(vBeliefPoints,DBSCAN);
+
+3.生成覆盖点集
+BeliefStateVector<BeliefState> pointSet = new BeliefStateVector<BeliefState>();  pointSet为覆盖点集
+while(!isAllMarked(dbscanResult))  dbscanResult没有被全部标记就继续采样取点，直到点全部被标记
+{
+	ArrayList<BeliefState> pointList = samplePoints(dbscanResult, SAMPLEPOINTS);  从dbscanResult中采样取点
+	pointSet.addAll(pointList);    把采样取点的结果全部加入到覆盖点集中
+}
+SAMPLEPOINTS为覆盖半径
+
+
+
+isAllMarked(ArrayList<BeliefStateVector<BeliefState>> result)  判断点集中的点是否全部被标记
+{
+	for(BeliefStateVector<BeliefState> pointList: result)
+	{
+		if(!pointList.isEmpty())
+		    return false;
+	}
+	return true;
+}
+
+采样取点，从一个聚类点集中随机选一个点，然后把这一个点epsilon范围内的点全部标记，也就是删除
+samplePoints(ArrayList<BeliefStateVector<BeliefState>> dbscanResult, double epsilon) 
+{
+	ArrayList<BeliefState> result = new ArrayList<BeliefState>();
+	for(BeliefStateVector<BeliefState> bsv : dbscanResult)
+	{
+		if(bsv.isEmpty())
+			continue;
+			
+		Random random = new Random(System.nanoTime());  随机选一个点
+		int index = random.nextInt(bsv.size());
+		BeliefState bs = bsv.get(index);
+		result.add(bs);
+		bsv.remove(index);    把该点删除
+			
+		L1Distance distancer = new L1Distance();
+		for(int i = 0; i < bsv.size(); ++i)   把bsv在epsilon范围内的点删除
+		{
+			if(distancer.distance(bs, bsv.get(i)) < epsilon)
+				bsv.remove(i);
+		}
+	}
+	return result;
+}
+
+4.开始迭代，在覆盖点集中反复迭代直到收敛
+boolean done = false;  
+while(!done)
+{
+	improveValueFunctions(pointSet);   在覆盖点集上进行更新操作
+	Pair<Double, Double> pComputedADRs = new Pair<Double, Double>(new Double(0.0), new Double(0.0));
+	done = checkADRConvergence( m_pPOMDP, dTargetValue, pComputedADRs );   检查是否收敛
+}
+
+更新操作
+improveValueFunctions(BeliefStateVector<BeliefState> vBeliefState)
+{
+	for(int i = 0; i < vBeliefState.size(); ++i)   对覆盖点集中的每一个点进行更新
+	{
+		BeliefState bsCurrent = vBeliefState.get(i);
+		AlphaVector avCurrentMax = m_vValueFunction.getMaxAlpha( bsCurrent ); 得到bsCurrent对应的最大向量
+		AlphaVector avBackup = backup( bsCurrent,m_vValueFunction);  更新信念点，产生新的向量avBackup
+			
+		double dBackupValue = avBackup.dotProduct( bsCurrent );   计算bsCurrent在新旧两个向量上的值
+		double dValue = avCurrentMax.dotProduct( bsCurrent );
+		double dDelta = dBackupValue - dValue;
+			
+		if(dDelta > 0.0)   如果更新后的值更高，把向量加入到值函数中
+			m_vValueFunction.addPrunePointwiseDominated( avBackup );
+}
+
+更新信念点的操作
+backup(BeliefState bs, LinearValueFunctionApproximation vValueFunction) vValueFunction为值函数
+{
+    新建两个Vector，分别用来保存最优的动作和最优动作对应的α向量
+	Vector<AlphaVector[]> vWinners = new Vector<AlphaVector[]>();  
+	Vector<Integer> vWinnersActions = new Vector<Integer>();
+				                   
+    迭代所有的action，计算出每个action下的回报值并比较得出最大的回报值
+    for(int iAction = 0; iAction < m_cActions; iAction++)
+    {                          
+        aNext = new AlphaVector[m_cObservations];  aNext存放由b,a,V,找到每个o迭代一步后的最大alpha向量
+		dValue = findMaxAlphas(iAction, bs, vValueFunction, aNext);  计算bs在动作iAction下的最大回报值
+						                |								                          
+        获取最大的回报值dValue，将相应的alpha向量avCurrent和最佳动作iMaxAction添加到vWinners和vWinnersActions中。
+		if(dValue>dMaxValue)
+		{
+			dMaxValue = dValue;
+			vWinners.clear();
+			vWinnersActions.clear();
+		}
+		if(dValue == dMaxValue)
+		{
+			aBest = aNext;
+			iMaxAction = iAction;
+			vWinners.add(aBest);
+			vWinnersActions.add(iMaxAction);
+		}
+    }					
+    
+	int idx = m_rndGenerator.nextInt(vWinners.size());  从vWinners中随机取一个alpha向量数组和动作，这必然是最佳动作
+	aBest = vWinners.elementAt(idx);  这里aBest是迭代一步后每个观察下的最优alpha向量数组
+	iMaxAction = vWinnersActions.elementAt(idx);  最佳动作
+
+	AlphaVector avMax = G( iMaxAction, vValueFunction, aBest );  计算出更新后的向量
+    avMax.setWitness( bs );
+    return avMax;
+}
+
+
+找到bs信念点在动作iAction下的最大回报值
+ findMaxAlphas( int iAction, BeliefState bs, LinearValueFunctionApproximation vValueFunction, AlphaVector[] aNext )
+ {
+    for( iObservation = 0 ; iObservation < m_cObservations ; iObservation++ )  迭代每一个观察，获得最大期望值，不包括立即回报值
+    {
+		dProb = bs.probabilityOGivenA( iAction, iObservation );  计算执行动作a得到观察o的概率
+		dSumProbs += dProb;
+		if( dProb > 0.0 )
+		{
+			bsSuccessor = bs.nextBeliefState( iAction, iObservation );  计算b、a、o的后继信念点
+			avAlpha = vValueFunction.getMaxAlpha( bsSuccessor );  后继信念点在值函数中值最大时所对应的向量
+			dValue = avAlpha.dotProduct( bsSuccessor );  后继信念点在值函数中对应的最大值
+			dSumValues += dValue * dProb;  加权求和
+		}
+		else
+		{
+			avAlpha = vValueFunction.getLast();
+		}
+		aNext[iObservation] = avAlpha;   每一个0迭代一部以后对应的最大向量	
+		}
+		
+		dSumValues /= dSumProbs; 
+		dSumValues *= m_pPOMDP.getDiscountFactor();
+		dSumValues += m_pPOMDP.immediateReward( bs, iAction ); 加上立即回报
+		
+		return dSumValues;
+ }
