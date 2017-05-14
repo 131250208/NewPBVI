@@ -1,5 +1,7 @@
 package pomdp.valuefunction;
 
+import java.io.Serializable;
+
 import pomdp.algorithms.PolicyStrategy;
 import pomdp.environments.POMDP;
 import pomdp.utilities.AlphaVector;
@@ -7,7 +9,7 @@ import pomdp.utilities.BeliefState;
 import pomdp.utilities.RandomGenerator;
 
 
-public class MDPValueFunction extends PolicyStrategy {
+public class MDPValueFunction extends PolicyStrategy implements Serializable {
 	protected LinearValueFunctionApproximation m_vValueFunction;
 	protected POMDP m_pPOMDP;
 	protected int m_cObservations;

@@ -1,5 +1,10 @@
 eclipse.preferences.version=1
+encoding//src/fileOperator/FileOp.java=UTF-8
+encoding//src/hmmBuilder/HmmModelBuilder.java=UTF-8
 encoding//src/pomdp/POMDPSolver.java=UTF-8
-encoding/<project>=UTF-8
+encoding//src/pomdpBuilder/JointStateOperator.java=UTF-8
+encoding//src/pomdpBuilder/PomdpModelBuilder.java=UTF-8
+encoding//src/presentation/Frame_entrance.java=UTF-8
+encoding//src/presentation/Vehicle.java=UTF-8
 encoding/PBVI\u4EE3\u7801\u9605\u8BFB2.txt=UTF-8
 encoding/newPBVI.txt=UTF-8

@@ -1,15 +1,17 @@
 package pomdp;
 
+import fileOperator.FileOp;
 import pomdp.algorithms.ValueIteration;
 import pomdp.algorithms.pointbased.PointBasedValueIteration;
 import pomdp.environments.POMDP;
 import pomdp.utilities.Logger;
+import pomdp.valuefunction.LinearValueFunctionApproximation;
 
 public class POMDPSolver {
 
 	public static void main(String[] args) {
 		String sPath = "Models/";// �õ�model·��
-		String sModelName = "hallway";// model��
+		String sModelName = "intersection";// model��
 		String sMethodName = "PBVI";//������
 		Logger.getInstance().setOutput(true);//�������
 		Logger.getInstance().setSilent(false);//�������������̨
@@ -48,8 +50,7 @@ public class POMDPSolver {
 		
 		//����blind policy�����PointBasedValueIteration
     	ValueIteration viAlgorithm = new PointBasedValueIteration(pomdp);
-    	
-    	int cMaxIterations = 400;
+    	int cMaxIterations = 10;
     	try
     	{
     		/* run POMDP solver */
@@ -75,6 +76,6 @@ public class POMDPSolver {
 			Logger.getInstance().log( " Stack trace: " );
 			err.printStackTrace();
     	}
-    	
+    	FileOp.writeObj(pomdp, "POMDP.TXT");
 	}
 }

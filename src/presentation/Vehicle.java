@@ -1,88 +1,72 @@
 package presentation;
 
 public class Vehicle {
-	private int x,y;
-	private int dis;
-	private int velocity;
+	private int DTC;
+
+	private int v_0;
+	private int[] action;//¿ÉÑ¡¶¯×÷£¬Êµ¼ÊÊýÖµ£¬²»ÊÇ´úºÅ
+	private int a;//×´Ì¬ÖÐµÄa´úºÅ£¬µ½´ïÕâ¸ö×´Ì¬Ç°Ö´ÐÐµÄ¶¯×÷
 	
-	private double[] intentions;//I1={0.8,0.1,0.1}ï¿½ï¿½I2={0.1,0.8,0.1}ï¿½ï¿½I3={0.1,0.1,0.8}ï¿½ï¿½ï¿½Ö±ï¿½Îªï¿½ï¿½ï¿½Ù¡ï¿½ï¿½ï¿½ï¿½Ù¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼
-	public static double[] I1={0.8,0.2};
-	public static double[] I2={0.2,0.8};
-//	public static double[] I3={0.1,0.1,0.8};
+	private double[] intentions;
+	public static double[] I0={0.7,0.2,0.1};
+	public static double[] I1={0.1,0.2,0.7};
 	
 	private boolean host;
 	
-	public Vehicle(boolean host,int x,int y,int v) {
+	public Vehicle(int DTC,int v_0,int a) {
 		// TODO Auto-generated constructor stub
-		this.host=host;
-		this.x=x;
-		this.y=y;
-		this.velocity=v;
+		this.DTC=DTC;
+		this.v_0=v_0;
+		this.a=a;
 	}
-	public Vehicle(boolean host,int x,int y,int v,int inten_num) {
+	public Vehicle(int DTC,int v_0,int a,int inten_num) {
 		// TODO Auto-generated constructor stub
-		this(host,x,y,v);
+		this(DTC,v_0,a);
 		switch(inten_num){
+			case 0:this.intentions=I0;
+				break;
 			case 1:this.intentions=I1;
 				break;
-			case 2:this.intentions=I2;
-				break;
-//			case 3:this.intentions=I3;
-//				break;
 		}
 	}
 	
-	public void execute(int a){//ï¿½ï¿½Î»Ê±ï¿½ä²½Ö´ï¿½ï¿½aï¿½ï¿½ï¿½ï¿½
-		int v2=velocity+a;
-		if(v2<0)v2=0;
-		
-		int s;
-		if(a==0){
-			s=velocity;	
+	public void execute(int a){
+		int v2 = v_0 + a;
+		if(v2<0)v2=0;//É²³µ×î¶àËÙ¶È¼õµ½0
+
+		if (a != 0) {
+			int s = (v2*v2 - v_0*v_0) / (2 * a);
+			DTC -= s;
 		}
-		else s=(v2*v2-velocity*velocity)/(2*a);
-		
-		if(host){
-			y-=s;
+		else {
+			DTC -= v_0;
 		}
-		else x+=s;
-		
-		velocity=v2;
+		v_0 = v2;
+		this.a=a;
 	}
-	public int getX() {
-		return x;
-	}
-	public void setX(int x) {
-		this.x = x;
-	}
-	public int getY() {
-		return y;
-	}
-	public void setY(int y) {
-		this.y = y;
-	}
-	public int getVelocity() {
-		return velocity;
-	}
-	public void setVelocity(int velocity) {
-		this.velocity = velocity;
-	}
+	
 	public double[] getIntentions() {
 		return intentions;
 	}
-	public void setIntentions_dis(double[] intentions_dis) {
+	public void setIntentions(double[] intentions) {
 		this.intentions = intentions;
 	}
-	public boolean isHost() {
-		return host;
+	public int getDTC() {
+		return DTC;
 	}
-	public void setHost(boolean host) {
-		this.host = host;
+	public void setDTC(int dTC) {
+		DTC = dTC;
 	}
-	public int getDis() {
-		if(host){
-			return y-160;
-		}
-		return 507-x;
+	public int getV_0() {
+		return v_0;
+	}
+	public void setV_0(int v_0) {
+		this.v_0 = v_0;
+	}
+	public int getA() {
+		return a;
+	}
+	public void setA(int a) {
+		this.a = a;
 	}
 }

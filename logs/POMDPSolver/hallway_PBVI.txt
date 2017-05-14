@@ -4,4 +4,4 @@ Started loading model Models/hallway.POMDP
 
 max is 1.0 min is 0.0
 0.017865
-POMDP:computeAverageDiscountedReward:After 2 tests. ADR 0.0, stdev 0.0
+POMDP:computeAverageDiscountedReward:After 2 tests. ADR 0.035, stdev 0.02455

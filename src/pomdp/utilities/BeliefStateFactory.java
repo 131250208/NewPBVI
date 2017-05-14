@@ -1,5 +1,6 @@
 package pomdp.utilities;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -12,7 +13,7 @@ import pomdp.environments.POMDP;
 import pomdp.utilities.distance.DistanceMetric;
 import pomdp.utilities.distance.L1Distance;
 
-public class BeliefStateFactory{
+public class BeliefStateFactory implements Serializable{
 
 	protected POMDP m_pPOMDP;
 	/*

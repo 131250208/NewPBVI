@@ -1,9 +1,12 @@
 package pomdpBuilder;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class JointStateOperator {
+import fileOperator.FileOp;
+
+public class JointStateOperator implements Serializable{
 
 	
 	private int asc;
@@ -23,20 +26,11 @@ public class JointStateOperator {
 		this.asc=asc;
 		this.con=con;
 		this.des=des;
-		
-//		//计算最大速度和偏移量
-//		/*默认当人类驾驶车辆通过十字路口后，自动驾驶车辆只会采取加速策略，
-//		 * 所以最坏情况就是，在人类驾驶车辆通过十字路口前，自动驾驶车辆一
-//		 * 直减速到0（这里我们计算偏移量时看作在原地不动，这样偏移量略大一点更保险）*/
-//		int t1=(int)Math.ceil(Math.sqrt(2*asc*DTC_max+v_0*v_0)/asc);//人类驾驶车辆全程加速通过十字路口的时间
-//		int t_max=2*t1;
-//		this.offset=(v_0*t_max+asc*t_max*t_max/2)-DTC_max;
-//		int v_max=(int)Math.ceil(v_0+asc*t_max);
-//		
-//		this.sign=new char[DTC_max+offset+1][v_max+1][DTC_max+offset+1][v_max+1];
 				
 		this.calculate_js();
 		System.out.println("\nnumber of joint states: "+this.getNum_js());
+		
+		FileOp.writeObj(this, "JointStateOperator.txt");
 	}
 	
 	public boolean exist_observation(int... ob){
@@ -54,12 +48,13 @@ public class JointStateOperator {
 	}
 	private boolean exist_jstate(int... jstate){//没有意图的jstate
 		for(int i=0;i<jointstates.size();++i){
-			if(jointstates.get(i)[0]==jstate[0]
-					&&jointstates.get(i)[1]==jstate[1]
-					&&jointstates.get(i)[2]==jstate[2]
-					&&jointstates.get(i)[4]==jstate[3]
-					&&jointstates.get(i)[5]==jstate[4]
-					&&jointstates.get(i)[6]==jstate[5]){
+			int[] temp=jointstates.get(i);
+			if(temp[0]==jstate[0]
+					&&temp[1]==jstate[1]
+					&&temp[2]==jstate[2]
+					&&temp[4]==jstate[3]
+					&&temp[5]==jstate[4]
+					&&temp[6]==jstate[5]){
 				return true;
 			}
 		}
@@ -146,14 +141,14 @@ public class JointStateOperator {
 		
 		
 		//继续深搜
-		if (DTC_host > 0) {
-			if (DTC_human <= 0) {
-				trans_js(DTC_human, v_human, asc, DTC_host, v_host, asc);
-				trans_js(DTC_human, v_human,con, DTC_host, v_host,  asc);
-				trans_js(DTC_human, v_human,des, DTC_host, v_host,  asc);
-			}
-			else
-			{
+		if (DTC_host > 0&&DTC_human>0) {
+//			if (DTC_human <= 0) {
+//				trans_js(DTC_human, v_human, asc, DTC_host, v_host, asc);
+//				trans_js(DTC_human, v_human,con, DTC_host, v_host,  asc);
+//				trans_js(DTC_human, v_human,des, DTC_host, v_host,  asc);
+//			}
+//			else
+//			{
 				trans_js(DTC_human, v_human,asc, DTC_host, v_host,  asc);
 				trans_js(DTC_human, v_human,asc, DTC_host, v_host, con);
 				trans_js(DTC_human, v_human,asc, DTC_host, v_host,  des);
@@ -163,45 +158,52 @@ public class JointStateOperator {
 				trans_js(DTC_human, v_human,des, DTC_host, v_host,  asc);
 				trans_js(DTC_human, v_human,des, DTC_host, v_host,  con);
 				trans_js(DTC_human, v_human,des, DTC_host, v_host,  des);
-			}
+//			}
 		}
 	}
 	
 	/*向外提供的接口*/
 	public int[][] getNextJstates(int...jstate){//7元jstate，包括意图state[3]，返回两个可能的后续状态
 		
+		int DTC_human=jstate[0];
+		int v_human=jstate[1];
+		int a_human=jstate[2];
+		
+		int DTC_host=jstate[4];
+		int v_host=jstate[5];
+		int a_host=jstate[6];
 		//联合状态更新
-		int v2 = jstate[1] + jstate[2];
+		int v2 = v_human + a_human;
 		if(v2<0)v2=0;//刹车最多速度减到0
 
-		if (jstate[2] != 0) {
-			int s = (v2*v2 - jstate[1]*jstate[1]) / (2 * jstate[2]);
-			jstate[0] -= s;
+		if (a_human != 0) {
+			int s = (v2*v2 - v_human*v_human) / (2 * a_human);
+			DTC_human -= s;
 		}
 		else {
-			jstate[0] -= jstate[1];
+			DTC_human -= v_human;
 		}
-		jstate[1] = v2;
+		v_human = v2;
 
-		v2 = jstate[5] + jstate[6];
+		v2 = v_host + a_host;
 		if(v2<0)v2=0;
 		
-		if (jstate[6] != 0) {
-			int s = (v2*v2 - jstate[5]*jstate[5]) / (2 * jstate[6]);
-			jstate[4] -= s;
+		if (a_host != 0) {
+			int s = (v2*v2 - v_host*v_host) / (2 * a_host);
+			DTC_host -= s;
 		}
 		else {
-			jstate[4] -= jstate[5];
+			DTC_host -= v_host;
 		}
 
-		jstate[5] = v2;
+		v_host = v2;
 		
 		int[][] res=new int[2][7];
 		//判断后续状态是否存在
-		if(!exist_jstate(jstate[0],jstate[1],jstate[2],jstate[4],jstate[5],jstate[6]))return null;//不存在，没有后续
+		if(!exist_jstate(DTC_human,v_human,a_human,DTC_host,v_host,a_host))return null;//不存在，没有后续
 
-		int[] js_0={jstate[0],jstate[1],jstate[2],0,jstate[4],jstate[5],jstate[6]};
-		int[] js_1={jstate[0],jstate[1],jstate[2],1,jstate[4],jstate[5],jstate[6]};
+		int[] js_0={DTC_human,v_human,a_human,0,DTC_host,v_host,a_host};
+		int[] js_1={DTC_human,v_human,a_human,1,DTC_host,v_host,a_host};
 		res[0]=js_0;
 		res[1]=js_1;		
 		return res;	
@@ -220,16 +222,18 @@ public class JointStateOperator {
 	/*对外接口，获得状态的号码*/
 	public int getIndex_jstate(int... jstate){//包含意图的jstate，7元
 		for(int i=0;i<jointstates.size();++i){
-			if(jointstates.get(i)[0]==jstate[0]
-					&&jointstates.get(i)[1]==jstate[1]
-					&&jointstates.get(i)[2]==jstate[2]
-					&&jointstates.get(i)[3]==jstate[3]
-					&&jointstates.get(i)[4]==jstate[4]
-					&&jointstates.get(i)[5]==jstate[5]
-					&&jointstates.get(i)[6]==jstate[6]){
+			int[] temp=jointstates.get(i);
+			if(temp[0]==jstate[0]
+					&&temp[1]==jstate[1]
+					&&temp[2]==jstate[2]
+					&&temp[3]==jstate[3]
+					&&temp[4]==jstate[4]
+					&&temp[5]==jstate[5]
+					&&temp[6]==jstate[6]){
 				return i;
 			}
 		}
+		
 		return -1;
 	}
 	
@@ -260,6 +264,6 @@ public class JointStateOperator {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		JointStateOperator jso=new JointStateOperator(100,50,50,0,-50);
-		
+	
 	}
 }

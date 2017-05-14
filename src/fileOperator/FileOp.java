@@ -3,9 +3,14 @@ package fileOperator;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import fileOperator.FileOp;
@@ -72,4 +77,72 @@ public class FileOp {
 		}
 		return false;
 	}
+	public static Object readObj(String filename){
+		ObjectInputStream ois=null;
+		File file = new File("./Solver/" + filename);
+		Object ob=null;
+		try {
+			ois=new ObjectInputStream(new FileInputStream(file));
+			ob=ois.readObject();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				ois.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		 
+		return ob;
+		
+	}
+	public static void writeObj(Object ob,String filename){
+		 ObjectOutputStream oos =null;       
+		 File file = new File("./Solver/" + filename);
+		 
+		try {
+			 if (!file.exists()) {
+				 file.createNewFile();
+			} 
+			 else {
+				FileOp.cleanUpFileContent(file);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+         try {
+        	 if(file.exists()){
+        		 oos = new ObjectOutputStream(
+    			         new FileOutputStream(file));
+        		 oos.writeObject(ob);
+        	 }
+        	 else System.out.println("文件不存在");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				oos.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	
 }

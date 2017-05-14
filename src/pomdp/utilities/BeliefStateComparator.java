@@ -1,9 +1,10 @@
 package pomdp.utilities;
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-public class BeliefStateComparator implements Comparator<BeliefState> {
+public class BeliefStateComparator implements Comparator<BeliefState>,Serializable {
 	protected double m_dEpsilon;
 	protected static BeliefStateComparator m_bscComparator = null;
 	

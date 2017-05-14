@@ -3,6 +3,7 @@ package pomdp.algorithms.pointbased;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import fileOperator.FileOp;
 import pomdp.algorithms.ValueIteration;
 import pomdp.environments.POMDP;
 import pomdp.utilities.AlphaVector;
@@ -18,6 +19,7 @@ public class PointBasedValueIteration extends ValueIteration
      protected boolean m_bSingleValueFunction = true;
  	 protected boolean m_bRandomizedActions;
  	protected double m_dFilteredADR = 0.0;
+ 	private double ADR_max=-100.;
  	 
  	public PointBasedValueIteration( POMDP pomdp ){
 		super(pomdp);
@@ -103,11 +105,17 @@ public class PointBasedValueIteration extends ValueIteration
 			Pair<Double, Double> pComputedADRs = new Pair<Double, Double>(new Double(0.0), new Double(0.0));
 			done = done || checkADRConvergence( m_pPOMDP, dTargetValue, pComputedADRs );//ADR收敛
 			
+			double ADR= ((Number) pComputedADRs.first()).doubleValue() ;
+			if(ADR>ADR_max){//将最大ADR的valueFunction写在序列化文件中
+				ADR_max=ADR;
+				FileOp.writeObj(m_vValueFunction, "ValueFunction.txt");
+			}
+			
 			Logger.getInstance().logln( 
 					"PBVI: Iteration " + iIteration + ","  +
 					" |Vn| = " + m_vValueFunction.size() +
 					" |B| = " + vBeliefPoints.size() +
-					" simulated ADR " + ((Number) pComputedADRs.first()).doubleValue() +
+					" simulated ADR " +ADR+
 					" " );
 			Logger.getInstance().logln();
 		}

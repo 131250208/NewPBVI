@@ -1,5 +1,6 @@
 package pomdp.utilities.datastructures;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -7,7 +8,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 
-public class LinkedList<V> implements List<V> {
+public class LinkedList<V> implements List<V>,Serializable {
 	private Link<V> m_lHead, m_lTail;
 	private int m_cElements;
 	
@@ -250,7 +251,7 @@ public class LinkedList<V> implements List<V> {
 	}
 	
 	@SuppressWarnings("hiding")
-	private class Link<V>{
+	private class Link<V> implements Serializable{
 		public V m_vData;
 		public Link<V> m_lPrevious, m_lNext;
 		public boolean m_bDeleted;
