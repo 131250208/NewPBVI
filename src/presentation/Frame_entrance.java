@@ -63,7 +63,7 @@ public class Frame_entrance extends JFrame implements MouseListener{
 		
 		
 		v_host=new Vehicle(DTC_max,v_0,0);//true, 527, 497, 50
-		v_human=new Vehicle(DTC_max,v_0,0,0);	//false, 142, 146, 50,1
+		v_human=new Vehicle(DTC_max,v_0,0,1);	//false, 142, 146, 50,1
 		vehicle_host=new JLabel();
 		vehicle_human=new JLabel();
 		vehicle_host.setSize(11, 29);
@@ -166,7 +166,7 @@ public class Frame_entrance extends JFrame implements MouseListener{
 	}
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		Frame_entrance jFrame=new Frame_entrance(400,50,50,0,-50);
+		Frame_entrance jFrame=new Frame_entrance(200,50,50,0,-50);
 		jFrame.startFlash();
 	}
 }

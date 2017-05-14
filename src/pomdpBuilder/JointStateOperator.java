@@ -242,13 +242,15 @@ public class JointStateOperator implements Serializable{
 	}
 	/*对外接口，获得状态的号码*/
 	public int getIndex_ob(int... ob){//获得观察的号码
+		int[] ob_i=null;
 		for(int i=0;i<observations.size();++i){
-			if(observations.get(i)[0]==ob[0]
-					&&observations.get(i)[1]==ob[1]
-					&&observations.get(i)[2]==ob[2]
-					&&observations.get(i)[3]==ob[3]
-					&&observations.get(i)[4]==ob[4]
-					&&observations.get(i)[5]==ob[5]){
+			ob_i=observations.get(i);
+			if(ob_i[0]==ob[0]
+					&&ob_i[1]==ob[1]
+					&&ob_i[2]==ob[2]
+					&&ob_i[3]==ob[3]
+					&&ob_i[4]==ob[4]
+					&&ob_i[5]==ob[5]){
 				return i;
 			}
 		}

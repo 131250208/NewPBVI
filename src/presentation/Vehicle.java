@@ -4,12 +4,12 @@ public class Vehicle {
 	private int DTC;
 
 	private int v_0;
-	private int[] action;//¿ÉÑ¡¶¯×÷£¬Êµ¼ÊÊýÖµ£¬²»ÊÇ´úºÅ
-	private int a;//×´Ì¬ÖÐµÄa´úºÅ£¬µ½´ïÕâ¸ö×´Ì¬Ç°Ö´ÐÐµÄ¶¯×÷
+	private int[] action;//ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ï¿½ï¿½
+	private int a;//×´Ì¬ï¿½Ðµï¿½aï¿½ï¿½ï¿½Å£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬Ç°Ö´ï¿½ÐµÄ¶ï¿½ï¿½ï¿½
 	
 	private double[] intentions;
 	public static double[] I0={0.7,0.2,0.1};
-	public static double[] I1={0.1,0.2,0.7};
+	public static double[] I1={0.3,0.5,0.2};
 	
 	private boolean host;
 	
@@ -32,7 +32,7 @@ public class Vehicle {
 	
 	public void execute(int a){
 		int v2 = v_0 + a;
-		if(v2<0)v2=0;//É²³µ×î¶àËÙ¶È¼õµ½0
+		if(v2<0)v2=0;//É²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶È¼ï¿½ï¿½ï¿½0
 
 		if (a != 0) {
 			int s = (v2*v2 - v_0*v_0) / (2 * a);

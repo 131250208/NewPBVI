@@ -5,53 +5,53 @@ Begin blind policy computation  3 actions
 .....Done action 1 after 55 iterations |V| = 2
 .....Done action 2 after 55 iterations |V| = 3
 Done blind policy
-POMDP:computeAverageDiscountedReward:After 500 tests. ADR 27.814, stdev 59.00629
-PBVI: Iteration 0, |Vn| = 4 |B| = 1 simulated ADR 27.813999999999883 
+POMDP:computeAverageDiscountedReward:After 500 tests. ADR 73.358, stdev 71.82149
+PBVI: Iteration 0, |Vn| = 4 |B| = 1 simulated ADR 73.35828489264023 
 
 Expanding belief space
 Expanded belief space - |B| = 2
-POMDP:computeAverageDiscountedReward:After 500 tests. ADR 24.256, stdev 57.57064
-PBVI: Iteration 1, |Vn| = 3 |B| = 2 simulated ADR 24.25599999999989 
+POMDP:computeAverageDiscountedReward:After 500 tests. ADR 76.745, stdev 70.24481
+PBVI: Iteration 1, |Vn| = 6 |B| = 2 simulated ADR 76.74454141308019 
 
 Expanding belief space
 Expanded belief space - |B| = 4
-POMDP:computeAverageDiscountedReward:After 500 tests. ADR 21.546, stdev 55.50971
-PBVI: Iteration 2, |Vn| = 3 |B| = 4 simulated ADR 21.545999999999882 
+POMDP:computeAverageDiscountedReward:After 500 tests. ADR 77.749, stdev 68.50981
+PBVI: Iteration 2, |Vn| = 9 |B| = 4 simulated ADR 77.74867890636025 
 
 Expanding belief space
 Expanded belief space - |B| = 8
-POMDP:computeAverageDiscountedReward:After 500 tests. ADR 26.239, stdev 56.059
-PBVI: Iteration 3, |Vn| = 6 |B| = 8 simulated ADR 26.238603999999917 
+POMDP:computeAverageDiscountedReward:After 500 tests. ADR 83.133, stdev 68.81887
+PBVI: Iteration 3, |Vn| = 15 |B| = 8 simulated ADR 83.13333120796014 
 
 Expanding belief space
 Expanded belief space - |B| = 16
-POMDP:computeAverageDiscountedReward:After 500 tests. ADR 29.006, stdev 57.59904
-PBVI: Iteration 4, |Vn| = 8 |B| = 16 simulated ADR 29.005519999999922 
+POMDP:computeAverageDiscountedReward:After 500 tests. ADR 78.721, stdev 71.60872
+PBVI: Iteration 4, |Vn| = 19 |B| = 16 simulated ADR 78.72144547204029 
 
 Expanding belief space
 Expanded belief space - |B| = 32
-POMDP:computeAverageDiscountedReward:After 500 tests. ADR 32.059, stdev 57.80153
-PBVI: Iteration 5, |Vn| = 16 |B| = 32 simulated ADR 32.0586519999999 
+POMDP:computeAverageDiscountedReward:After 500 tests. ADR 83.56, stdev 68.71976
+PBVI: Iteration 5, |Vn| = 28 |B| = 32 simulated ADR 83.55970888336023 
 
 Expanding belief space
 Expanded belief space - |B| = 64
-POMDP:computeAverageDiscountedReward:After 500 tests. ADR 25.251, stdev 57.66432
-PBVI: Iteration 6, |Vn| = 17 |B| = 64 simulated ADR 25.250531999999914 
+POMDP:computeAverageDiscountedReward:After 500 tests. ADR 80.096, stdev 68.3678
+PBVI: Iteration 6, |Vn| = 44 |B| = 64 simulated ADR 80.09578298504009 
 
 Expanding belief space
 Expanded belief space - |B| = 128
-POMDP:computeAverageDiscountedReward:After 500 tests. ADR 28.685, stdev 55.37648
-PBVI: Iteration 7, |Vn| = 17 |B| = 128 simulated ADR 28.68455599999991 
+POMDP:computeAverageDiscountedReward:After 500 tests. ADR 81.193, stdev 68.775
+PBVI: Iteration 7, |Vn| = 54 |B| = 128 simulated ADR 81.19298863904024 
 
 Expanding belief space
 Expanded belief space - |B| = 228
-POMDP:computeAverageDiscountedReward:After 500 tests. ADR 33.017, stdev 56.87619
-PBVI: Iteration 8, |Vn| = 17 |B| = 228 simulated ADR 33.0166399999999 
+POMDP:computeAverageDiscountedReward:After 500 tests. ADR 79.971, stdev 69.16803
+PBVI: Iteration 8, |Vn| = 82 |B| = 228 simulated ADR 79.97057489384008 
 
 Expanding belief space
 Expanded belief space - |B| = 328
-POMDP:computeAverageDiscountedReward:After 500 tests. ADR 32.256, stdev 59.70645
-PBVI: Iteration 9, |Vn| = 17 |B| = 328 simulated ADR 32.25567599999991 
+POMDP:computeAverageDiscountedReward:After 500 tests. ADR 78.912, stdev 67.39143
+PBVI: Iteration 9, |Vn| = 114 |B| = 328 simulated ADR 78.91194359752025 
 
-POMDP:computeAverageDiscountedReward:After 2000 tests. ADR 30.871, stdev 57.3262
-POMDPSolver:main:ADR = 30.870923000001525
+POMDP:computeAverageDiscountedReward:After 2000 tests. ADR 79.497, stdev 66.7298
+POMDPSolver:main:ADR = 79.49681585144893

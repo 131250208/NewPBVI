@@ -117,8 +117,8 @@ public class PomdpModelBuilder {
 		
 		for (int i = 0; i < amountOfStates; i++) {
 			double pr=0.0;
-			if(i==jso.getIndex_jstate(state_0))pr=0.8;
-			if(i==jso.getIndex_jstate(state_1))pr=0.2;
+			if(i==jso.getIndex_jstate(state_0))pr=0.2;
+			if(i==jso.getIndex_jstate(state_1))pr=0.8;
 			
 			FileOp.appendFileContent(pomdpModelFileName, String.format("%.6f", pr));
 			if (i != amountOfStates - 1) {
@@ -207,7 +207,7 @@ public class PomdpModelBuilder {
 		int a_host=jstate[6];
 		
 		if(DTC_human>0&&DTC_host<0)return 100.;//自动驾驶先通过
-		if(DTC_human<0&&DTC_host>0)return 80.;//人类驾驶先通过
+		if(DTC_human<0&&DTC_host>0)return 30.;//人类驾驶先通过
 		if(DTC_human<0&&DTC_host<0)return -100.;//同一时间段通过，碰撞风险很大，收益最低
 		
 		int v2_2=0;
@@ -237,8 +237,7 @@ public class PomdpModelBuilder {
 		
 		double res=Math.abs(t_human-t_host);
 		if(res<=1.1)return -100.;//差距在一个时间单位里视为具有碰撞的高风险
-		return res;
-		
+		else return res*50;
 	}
 
 	//写入回报函数
@@ -264,13 +263,6 @@ public class PomdpModelBuilder {
 						
 						double rw_js0=u1*rw_safe_js0+u2*rw_time_js0+u3*rw_cost;
 						double rw_js1=u1*rw_safe_js1+u2*rw_time_js1+u3*rw_cost;
-//						
-//						System.out.println("R: " + a_host + " : "+i+" : "+js_0+" : * "+ String.format("%.6f", rw_js0)+"---"+
-//								next_states[0][0]+","+next_states[0][1]+","+next_states[0][2]+","+next_states[0][3]
-//										+","+next_states[0][4]+","+next_states[0][5]+","+next_states[0][6]+"\n");
-//						System.out.println("R: " + a_host + " : "+i+" : "+js_1+" : * "+ String.format("%.6f", rw_js1)+"---"+
-//								next_states[1][0]+","+next_states[1][1]+","+next_states[1][2]+","+next_states[1][3]
-//								+","+next_states[1][4]+","+next_states[1][5]+","+next_states[1][6]+"\n");
 						
 						FileOp.appendFileContent(pomdpModelFileName, 
 								"R: " + a_host + " : "+i+" : "+js_0+" : * "+ String.format("%.6f", rw_js0)+"\n");
@@ -284,7 +276,7 @@ public class PomdpModelBuilder {
 	}
 	
 	public static void main(String[] args) {
-		PomdpModelBuilder pmd=new PomdpModelBuilder(400,50,50,0,-50);
+		PomdpModelBuilder pmd=new PomdpModelBuilder(200,50,50,0,-50);
 		pmd.buildPomdpModelFile();
 		pmd.writeDiscount(0.90f);
 		pmd.writeValues("reward");

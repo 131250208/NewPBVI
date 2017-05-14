@@ -1,8 +1,8 @@
 Started loading model Models/intersection.POMDP
-|S| = 236|A| = 3|O| = 354
-..Model file corrupted - needed to fix some transition values
+|S| = 1260|A| = 3|O| = 1890
+....................Model file corrupted - needed to fix some transition values
 Done loading model
 
 max is 87.4 min is -42.6
 0.8
-POMDP:computeAverageDiscountedReward:After 2 tests. ADR 81.251, stdev 11.97642
+POMDP:computeAverageDiscountedReward:After 2 tests. ADR -6.124, stdev 12.17544

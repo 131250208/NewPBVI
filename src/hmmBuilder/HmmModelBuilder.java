@@ -34,17 +34,17 @@ public class HmmModelBuilder {
 		
 		hmm =new Hmm <ObservationInteger >(2, new OpdfIntegerFactory (3));
 		
-		hmm.setPi (0, 0.50);
-		hmm.setPi (1, 0.50);
+		hmm.setPi (0, 0.20);
+		hmm.setPi (1, 0.80);
 		
 		hmm.setOpdf (0, new OpdfInteger (new double [] {0.7,0.2,0.1}));
-		hmm.setOpdf (1, new OpdfInteger (new double [] {0.1,0.2,0.7}));
+		hmm.setOpdf (1, new OpdfInteger (new double [] {0.3,0.5,0.2}));
 		
 		//转移矩阵
-		hmm.setAij (0, 1, 0.3);
-		hmm.setAij (0, 0, 0.7);
-		hmm.setAij (1, 0, 0.5);
-		hmm.setAij (1, 1, 0.5);
+		hmm.setAij (0, 1, 0.7);
+		hmm.setAij (0, 0, 0.3);
+		hmm.setAij (1, 0, 0.2);
+		hmm.setAij (1, 1, 0.8);
 	}
 	public void learn(String dir_observations){//参数为观察文件的位置
 		Reader reader = null;
